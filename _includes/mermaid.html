@@ -1,0 +1,43 @@
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const style = getComputedStyle(document.documentElement);
+        const theme = style.getPropertyValue('--theme').trim() || "dark";
+        // --panel is var(--pref-bg-color). Mermaid needs a resolved color, not a var() alias.
+        const panel = style.getPropertyValue('--pref-bg-color').trim() || "#0b1220";
+        const cluster = style.getPropertyValue('--panel-mid').trim() || panel;
+        const text = style.getPropertyValue('--pref-text-color').trim() || "#e6eef8";
+        const accent = style.getPropertyValue('--pref-accent-color').trim() || "#3b82f6";
+        const fontFamily = style.getPropertyValue('--pref-font-family').trim() || "Arial, sans-serif";
+        mermaid.initialize({ 
+            startOnLoad: false,
+            theme: theme,
+            securityLevel: 'loose',
+            themeVariables: {
+                background: panel,
+                primaryColor: panel,
+                secondaryColor: cluster,
+                tertiaryColor: panel,
+                clusterBkg: cluster,
+                clusterBorder: accent,
+                primaryTextColor: text,
+                primaryBorderColor: accent,
+                lineColor: accent,
+                arrowheadColor: accent,
+                fontFamily: fontFamily
+            }
+        });
+        
+        // Convert fenced code blocks to mermaid divs
+        document.querySelectorAll('pre code.language-mermaid').forEach((block, index) => {
+            const content = block.textContent;
+            const wrapper = document.createElement('div');
+            wrapper.className = 'mermaid';
+            wrapper.id = 'mermaid-' + index;
+            wrapper.textContent = content;
+            block.parentElement.parentNode.replaceChild(wrapper, block.parentElement);
+        });
+        
+        mermaid.run();
+    });
+</script>

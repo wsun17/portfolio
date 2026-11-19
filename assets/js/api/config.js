@@ -1,0 +1,93 @@
+---
+# Rebuilt on every build: incremental builds don't notice _config.yml changes, such as spring.
+regenerate: true
+---
+
+// ^^ Do not remove the above front matter, it is required for Jekyll processing
+
+export const baseurl = "{{ site.baseurl }}";
+
+export var pythonURI;
+if (location.hostname === "localhost" || location.hostname === "127.0.0.1") {
+    pythonURI = "http://localhost:8587";  // Same URI for localhost or 127.0.0.1
+} else {
+    pythonURI = "https://flask.opencodingsociety.com";
+
+}
+
+export var javaURI;
+// 127.0.0.1:8585 does not work for some machines
+if (location.hostname === "localhost" || location.hostname === "127.0.0.1") {
+        javaURI = "http://localhost:8585";
+} else {
+    javaURI = "https://spring.opencodingsociety.com";
+}
+
+// Shared across the signup, login, and password-reset OAuth flows (login.md,
+// support.md) so the client_id only needs updating in one place.
+export const GOOGLE_CLIENT_ID = "{{ site.google_client_id }}";
+
+// Whether this site runs Spring next to Flask (`spring` in _config.yml). Login, logout,
+// the navbar's DM bell and /profile skip Spring when it is false; a site without the
+// setting keeps Spring on.
+export const springEnabled = "{{ site.spring }}" !== "false";
+
+export var javaWebSocketURI;
+// Port 8589 only exists on localhost; in production nginx forwards /ws-chat
+// through javaURI's normal port (443), same as announcement_chat.html and
+// lesson_chat.html's buildChatSocketEndpoint() already do.
+if (location.hostname === "localhost" || location.hostname === "127.0.0.1") {
+    javaWebSocketURI = "http://localhost:8589";
+} else {
+    javaWebSocketURI = "https://spring.opencodingsociety.com";
+}
+
+export const fetchOptions = {
+    method: 'GET',  // Default method is GET
+    mode: 'cors', // Enable CORS (Cross-Origin Resource Sharing)
+    cache: 'default', // Default caching behavior
+    credentials: 'include', // Include credentials (cookies, etc.)
+    headers: {
+        'Content-Type': 'application/json',
+        'X-Origin': 'client' // Custom header to identify source
+    },
+};
+
+// User Login Function (allows both GET and POST)
+export function login(options) {
+    // Modify the options to use the correct method and include the request body
+    const requestOptions  = {
+        ...fetchOptions,  // Spread the existing fetchOptions object
+        method: options.method || 'POST',  // Dynamically set the method (default to POST)
+        body: options.method === 'POST' ? JSON.stringify(options.body) : undefined  // Only add body for POST requests
+    };
+
+    // Clear the message area
+    document.getElementById(options.message).textContent = "";
+
+    // Fetch JWT from the server. The returned promise settles once the result is shown,
+    // so a caller can tell when the attempt is over (it never rejects).
+    return fetch(options.URL, requestOptions)
+    .then(response => {
+        // Trap error response from the Web API
+        if (!response.ok) {
+            // A refusal (403: an expired guest, a closed Guest Window, a pending account) says why
+            const reason = response.status === 403
+                ? response.clone().json().then(body => body && body.message).catch(() => undefined)
+                : Promise.resolve(undefined);
+            return reason.then(why => {
+                const errorMsg = 'Login error: ' + response.status + (why ? ' - ' + why : '');
+                console.log(errorMsg);
+                document.getElementById(options.message).textContent = errorMsg;
+                return response;  // Exit early if response is not OK
+            });
+        }
+        // Success: Proceed with callback, passing the response body when it has one
+        return response.json().catch(() => undefined).then(body => options.callback(body));
+    })
+    .catch(error => {
+        // Handle network errors
+        console.log('Possible CORS or Service Down error: ' + error);
+        document.getElementById(options.message).textContent = 'Possible CORS or service down error: ' + error;
+    });
+}
