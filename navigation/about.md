@@ -22,7 +22,7 @@ gallery_images:
 
 ## As a conversation Starter
 
-Here are some places I have travelled to
+Here are some countries I have travelled to
 
 <comment>
 Flags are made using Wikipedia images
@@ -40,8 +40,12 @@ Flags are made using Wikipedia images
     // 2. Define a JavaScript object for our http source and our data rows for the Living in the World grid
     var http_source = "https://upload.wikimedia.org/wikipedia/commons/";
     var living_in_the_world = [
-        {"flag": "0/01/Flag_of_California.svg", "greeting": "(I live here)", "description": "California - forever"},
-        {"flag": "f/fd/Flag_of_Senegal.svg", "greeting": "I did a voulenteering trip in Senegal before", "description": "Senegal - 1 week"},
+        {"flag": "a/a4/Flag_of_the_United_States.svg", "greeting": "", "description": "United states - forever"},
+        {"flag": "f/fd/Flag_of_Senegal.svg", "greeting": "", "description": "Senegal - 1 week"},
+        {"flag": "f/fa/Flag_of_the_People%27s_Republic_of_China.svg", "greeting": "", "description": "China - ~1 week"},
+        {"flag": "d/d9/Flag_of_Canada_%28Pantone%29.svg", "greeting": "", "description": "Canada - ~4 days"},
+        {"flag": "6/6f/Flag_of_Mexico_%28Pantone%29.png", "greeting": "", "description": "Mexico - ~4 days"},
+        
     ];
 
     // 3a. The OCS card grid adjusts its columns to the available space.
@@ -75,12 +79,16 @@ Flags are made using Wikipedia images
     }
 </script>
 
-### Journey through Life
+### Journey through the World
 
 Here is what I did at those places
 
-- 🏢 San Diego CA Pre Del Norte, '12 to '26
-- 👨‍🏫 San Diego CA After Del Norte, '26 to present
+- 🏠 San Diego CA, my home
+- ⛰️ Rocky Mountains, national park
+- 🌋 Yellow Stone, national park
+- ⚕️ Senegal, voulenteering trip
+- 🏫 East Coast, visiting colleges
+- 🛳️ China, cruise
 
 ### Culture, Family, and Fun
 
